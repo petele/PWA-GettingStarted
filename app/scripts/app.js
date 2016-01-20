@@ -1,36 +1,37 @@
-// Initial weather forecast will go here
-var initialWeatherForecast = {
-  key: 'newyork',
-  label: 'New York, NY',
-  currently: {
-    time: Date.now(),
-    summary: 'Clear',
-    icon: 'partly-cloudy-day',
-    temperature: 52.74,
-    apparentTemperature: 74.34,
-    precipProbability: 0.20,
-    humidity: 0.77,
-    windBearing: 125,
-    windSpeed: 1.52
-  },
-  daily: {
-    data: [
-      {icon: 'clear-day', temperatureMax: 55, temperatureMin: 34},
-      {icon: 'rain', temperatureMax: 55, temperatureMin: 34},
-      {icon: 'snow', temperatureMax: 55, temperatureMin: 34},
-      {icon: 'sleet', temperatureMax: 55, temperatureMin: 34},
-      {icon: 'fog', temperatureMax: 55, temperatureMin: 34},
-      {icon: 'wind', temperatureMax: 55, temperatureMin: 34},
-      {icon: 'partly-cloudy-day', temperatureMax: 55, temperatureMin: 34}
-    ]
-  }
-};
 
 (function() {
   'use strict';
 
+  var initialWeatherForecast = {
+    key: 'newyork',
+    label: 'New York, NY',
+    currently: {
+      time: Date.now(),
+      summary: 'Clear',
+      icon: 'partly-cloudy-day',
+      temperature: 52.74,
+      apparentTemperature: 74.34,
+      precipProbability: 0.20,
+      humidity: 0.77,
+      windBearing: 125,
+      windSpeed: 1.52
+    },
+    daily: {
+      data: [
+        {icon: 'clear-day', temperatureMax: 55, temperatureMin: 34},
+        {icon: 'rain', temperatureMax: 55, temperatureMin: 34},
+        {icon: 'snow', temperatureMax: 55, temperatureMin: 34},
+        {icon: 'sleet', temperatureMax: 55, temperatureMin: 34},
+        {icon: 'fog', temperatureMax: 55, temperatureMin: 34},
+        {icon: 'wind', temperatureMax: 55, temperatureMin: 34},
+        {icon: 'partly-cloudy-day', temperatureMax: 55, temperatureMin: 34}
+      ]
+    }
+  };
+
   var app = {
     isLoading: true,
+    hasRequestPending: false,
     visibleCards: {},
     selectedCities: [],
     spinner: document.querySelector('.loader'),
@@ -62,7 +63,7 @@ var initialWeatherForecast = {
     var select = document.getElementById('selectCityToAdd');
     var selected = select.options[select.selectedIndex];
     var key = selected.value;
-    var label = selected.innerText;
+    var label = selected.textContent;
     app.getForecast(key, label);
     app.selectedCities.push({key: key, label: label});
     app.saveSelectedCities();
@@ -83,7 +84,7 @@ var initialWeatherForecast = {
 
   // Toggles the visibility of the add new city dialog.
   app.toggleAddDialog = function(visible) {
-    if (visible === true) {
+    if (visible) {
       app.addDialog.classList.add('dialog-container--visible');
     } else {
       app.addDialog.classList.remove('dialog-container--visible');
@@ -97,26 +98,26 @@ var initialWeatherForecast = {
     if (!card) {
       card = app.cardTemplate.cloneNode(true);
       card.classList.remove('cardTemplate');
-      card.querySelector('.location').innerText = data.label;
+      card.querySelector('.location').textContent = data.label;
       card.removeAttribute('hidden');
       app.container.appendChild(card);
       app.visibleCards[data.key] = card;
     }
-    card.querySelector('.description').innerText = data.currently.summary;
-    card.querySelector('.date').innerText =
+    card.querySelector('.description').textContent = data.currently.summary;
+    card.querySelector('.date').textContent =
       new Date(data.currently.time * 1000);
     card.querySelector('.current .icon').classList.add(data.currently.icon);
-    card.querySelector('.current .temperature .value').innerText =
+    card.querySelector('.current .temperature .value').textContent =
       Math.round(data.currently.temperature);
-    card.querySelector('.current .feels-like .value').innerText =
+    card.querySelector('.current .feels-like .value').textContent =
       Math.round(data.currently.apparentTemperature);
-    card.querySelector('.current .precip').innerText =
+    card.querySelector('.current .precip').textContent =
       Math.round(data.currently.precipProbability * 100) + '%';
-    card.querySelector('.current .humidity').innerText =
+    card.querySelector('.current .humidity').textContent =
       Math.round(data.currently.humidity * 100) + '%';
-    card.querySelector('.current .wind .value').innerText =
+    card.querySelector('.current .wind .value').textContent =
       Math.round(data.currently.windSpeed);
-    card.querySelector('.current .wind .direction').innerText =
+    card.querySelector('.current .wind .direction').textContent =
       data.currently.windBearing;
     var nextDays = card.querySelectorAll('.future .oneday');
     var today = new Date();
@@ -125,12 +126,12 @@ var initialWeatherForecast = {
       var nextDay = nextDays[i];
       var daily = data.daily.data[i];
       if (daily && nextDay) {
-        nextDay.querySelector('.date').innerText =
+        nextDay.querySelector('.date').textContent =
           app.daysOfWeek[(i + today) % 7];
         nextDay.querySelector('.icon').classList.add(daily.icon);
-        nextDay.querySelector('.temp-high .value').innerText =
+        nextDay.querySelector('.temp-high .value').textContent =
           Math.round(daily.temperatureMax);
-        nextDay.querySelector('.temp-low .value').innerText =
+        nextDay.querySelector('.temp-low .value').textContent =
           Math.round(daily.temperatureMin);
       }
     }
@@ -157,21 +158,28 @@ var initialWeatherForecast = {
       caches.match(url).then(function(response) {
         if (response) {
           response.json().then(function(json) {
-            json.key = key;
-            json.label = label;
-            app.updateForecastCard(json);
+            // Only update if the XHR is still pending, otherwise the XHR
+            // has already returned and provided the latest data.
+            if (app.hasRequestPending) {
+              console.log('updated from cache');
+              json.key = key;
+              json.label = label;
+              app.updateForecastCard(json);
+            }
           });
         }
       });
     }
     // Make the XHR to get the data, then update the card
     var request = new XMLHttpRequest();
+    app.hasRequestPending = true;
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           response.key = key;
           response.label = label;
+          app.hasRequestPending = false;
           app.updateForecastCard(response);
         }
       }
@@ -219,6 +227,7 @@ var initialWeatherForecast = {
     app.selectedCities = [
       {key: initialWeatherForecast.key, label: initialWeatherForecast.label}
     ];
+    app.saveSelectedCities();
   }
 
   /*****************************************************************************

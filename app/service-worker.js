@@ -1,5 +1,4 @@
-importScripts('/cache-polyfill.js');
-
+var cacheName = 'weatherPWA-201601201357';
 var filesToCache = [
   '/',
   '/index.html',
@@ -19,7 +18,6 @@ var filesToCache = [
   '/images/thunderstorm.png',
   '/images/wind.png'
 ];
-var cacheName = 'weatherPWA-201601191602';
 
 // Place Service Worker Install Event Handler Here
 self.addEventListener('install', function(e) {
