@@ -1,5 +1,5 @@
-var cacheName = 'weatherPWA-201601201357';
-var dataCacheName = 'weatherData-201601201357';
+var cacheName = 'weatherPWA-201601221145';
+var dataCacheName = 'weatherData';
 var filesToCache = [
   '/',
   '/index.html',
@@ -36,7 +36,7 @@ self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keyList) {
       return Promise.all(keyList.map(function(key) {
-        if (key !== cacheName) {
+        if (key !== cacheName && key !== dataCacheName) {
           return caches.delete(key);
         }
       }));

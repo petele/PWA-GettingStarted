@@ -277,3 +277,29 @@ body {
     &.thunderstorms { background-image: url('/images/thunderstorms.png'); }
   }
 }
+
+@media (max-width: 450px) {
+  .weather-forecast {
+    .date, .description {
+      font-size: 0.9em;
+    }
+    .current {
+      .icon {
+        width: 96px;
+        height: 96px;
+      }
+      .visual {
+        font-size: 3em;
+      }
+    }
+    .future {
+      .oneday {
+        .icon {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
+
+  }
+}
