@@ -1,20 +1,32 @@
 var gulp = require('gulp');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
+var sass = require('gulp-sass');
+var autoprefixer = require('gulp-autoprefixer');
 
+gulp.task('sass', function () {
+  return gulp
+    .src('./resources/*.scss')
+    .pipe(sass())
+    .pipe(autoprefixer())
+    .pipe(gulp.dest('./app/styles'));
+});
 
-// watch files for changes and reload
-gulp.task('default', function() {
+gulp.task('serve', ['sass'], function() {
+
   browserSync({
     notify: false,
     logPrefix: 'weatherPWA',
     server: ['app']
   });
-
+  gulp.watch('./resources/*.scss', ['sass']);
   gulp.watch([
-    '*.html',
-    '*.js',
-    'styles/**/*.css',
-    'scripts/**/*.js'
-  ], {cwd: 'app'}, reload);
+    './app/*.html',
+    './app/*.js',
+    './app/scripts/**/*.js',
+    './app/styles/**/*.css'
+  ]).on('change', browserSync.reload);
+
 });
+
+gulp.task('default', ['serve']);
