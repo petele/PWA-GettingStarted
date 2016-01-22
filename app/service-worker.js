@@ -1,4 +1,5 @@
 var cacheName = 'weatherPWA-201601201357';
+var dataCacheName = 'weatherData-201601201357';
 var filesToCache = [
   '/',
   '/index.html',
@@ -50,7 +51,7 @@ self.addEventListener('fetch', function(e) {
     e.respondWith(
       fetch(e.request)
         .then(function(response) {
-          return caches.open(cacheName).then(function(cache) {
+          return caches.open(dataCacheName).then(function(cache) {
             cache.put(e.request.url, response.clone());
             console.log('[ServiceWorker] FetchAndCache:', e.request.url);
             return response;
