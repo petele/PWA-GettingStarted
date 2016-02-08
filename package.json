@@ -1,4 +1,16 @@
 {
+  "name": "Progressive Web App - Weather Sample",
+  "version": "0.0.2",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Pete LePage",
+  "license": "Apache 2",
+  "bugs": "https://github.com/google/WebFundamentals/issues",
+  "homepage": "https://developers.google.com/web/fundamentals/getting-started/your-first-progressive-web-app/",
   "devDependencies": {
     "browser-sync": "^2.9.0",
     "gulp": "^3.9.0",
@@ -9,6 +21,5 @@
   },
   "engines": {
     "node": ">=0.12"
-  },
-  "private": true
+  }
 }
