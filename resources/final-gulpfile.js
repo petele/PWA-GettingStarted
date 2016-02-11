@@ -6,6 +6,8 @@ var autoprefixer = require('gulp-autoprefixer');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var del = require('del');
+var path = require('path');
+var swPrecache = require('sw-precache');
 
 gulp.task('clean', function() {
   return del([
@@ -14,6 +16,40 @@ gulp.task('clean', function() {
     './step-07/service-worker.js',
     './final/service-worker.js'
   ]);
+});
+
+function generateServiceWorker(forDir, callback) {
+  swPrecache.write(path.join(forDir, 'service-worker.js'), {
+    staticFileGlobs: [
+      forDir + '/**/*.{js,html,css,png,jpg,gif}',
+      './images/**/*.{png,svg,gif,jpg}',
+      './styles/**/*.css'
+    ],
+    stripPrefix: '.',
+    runtimeCaching: [{
+      urlPattern: /^https:\/\/publicdata-weather\.firebaseio\.com/,
+      handler: 'networkFirst',
+      options: {
+        cache: {
+          name: 'weatherData'
+        }
+      }
+    }]
+  }, callback); 
+}
+
+gulp.task('generate-sw', ['gen-sw-06', 'gen-sw-07', 'gen-sw-final']);
+
+gulp.task('gen-sw-06', function(callback) {
+  generateServiceWorker('./step-06', callback);
+});
+
+gulp.task('gen-sw-07', function(callback) {
+  generateServiceWorker('./step-07', callback);
+});
+
+gulp.task('gen-sw-final', function(callback) {
+  generateServiceWorker('./final', callback);
 });
 
 gulp.task('sass', function () {
