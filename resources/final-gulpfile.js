@@ -9,19 +9,22 @@ var del = require('del');
 var path = require('path');
 var swPrecache = require('sw-precache');
 
-gulp.task('clean', function() {
-  return del([
-    './styles/*',
-    './step-06/service-worker.js',
-    './step-07/service-worker.js',
-    './final/service-worker.js'
-  ]);
+gulp.task('sass', function () {
+  return gulp
+    .src('./resources/*.scss')
+    .pipe(sass())
+    .pipe(autoprefixer())
+    .pipe(gulp.dest('./styles/'))
+    .pipe(minifyCss({}))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest('./styles/'));
 });
 
-function generateServiceWorker(forDir, callback) {
-  swPrecache.write(path.join(forDir, 'service-worker.js'), {
+gulp.task('generate-sw', function() {
+  var rootDir = './step-06';
+  var swOptions = {
     staticFileGlobs: [
-      forDir + '/**/*.{js,html,css,png,jpg,gif}',
+      rootDir + '/**/*.{js,html,css,png,jpg,gif}',
       './images/**/*.{png,svg,gif,jpg}',
       './styles/**/*.css'
     ],
@@ -35,35 +38,11 @@ function generateServiceWorker(forDir, callback) {
         }
       }
     }]
-  }, callback); 
-}
-
-gulp.task('generate-sw', ['gen-sw-06', 'gen-sw-07', 'gen-sw-final']);
-
-gulp.task('gen-sw-06', function(callback) {
-  generateServiceWorker('./step-06', callback);
+  };
+  swPrecache.write(path.join(rootDir, 'service-worker.js'), swOptions);
 });
 
-gulp.task('gen-sw-07', function(callback) {
-  generateServiceWorker('./step-07', callback);
-});
-
-gulp.task('gen-sw-final', function(callback) {
-  generateServiceWorker('./final', callback);
-});
-
-gulp.task('sass', function () {
-  return gulp
-    .src('./resources/*.scss')
-    .pipe(sass())
-    .pipe(autoprefixer())
-    .pipe(gulp.dest('./styles/'))
-    .pipe(minifyCss({}))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest('./styles/'));
-});
-
-gulp.task('serve', function() {
+gulp.task('serve', ['generate-sw'], function() {
   gulp.watch('./resources/*.scss', ['sass']);
   browserSync({
     notify: false,
@@ -77,8 +56,7 @@ gulp.task('serve', function() {
     './**/*.css',
     '!./**/service-worker.js',
     '!./gulpfile.js'
-  ]).on('change', browserSync.reload);
-
+  ], ['generate-sw'], browserSync.reload);
 });
 
 gulp.task('default', ['serve']);

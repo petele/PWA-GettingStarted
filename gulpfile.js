@@ -7,15 +7,6 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var del = require('del');
 
-gulp.task('clean', function() {
-  return del([
-    './styles/*',
-    './step-06/service-worker.js',
-    './step-07/service-worker.js',
-    './final/service-worker.js'
-  ]);
-});
-
 gulp.task('sass', function () {
   return gulp
     .src('./resources/*.scss')
@@ -41,8 +32,7 @@ gulp.task('serve', function() {
     './**/*.css',
     '!./**/service-worker.js',
     '!./gulpfile.js'
-  ]).on('change', browserSync.reload);
-
+  ], browserSync.reload);
 });
 
 gulp.task('default', ['serve']);
