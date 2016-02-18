@@ -30,7 +30,6 @@
     }
   };
 
-  // Don't forget to add hasRequestPending: false
   var app = {
     isLoading: true,
     visibleCards: {},
@@ -154,8 +153,7 @@
   app.getForecast = function(key, label) {
     var url = 'https://publicdata-weather.firebaseio.com/';
     url += key + '.json';
-    // Make request to the cache here
-    // Remember to set app.hasRequestPending = true!
+    // Make the XHR to get the data, then update the card
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -163,8 +161,7 @@
           var response = JSON.parse(request.response);
           response.key = key;
           response.label = label;
-          // Remember to set app.hasRequestPending = false!
-          console.log('[App] Forecast Updated From Network');
+          app.hasRequestPending = false;
           app.updateForecastCard(response);
         }
       }
@@ -215,10 +212,6 @@
   }
 
   // Add feature check for Service Workers here
-  if('serviceWorker' in navigator) {
-    navigator.serviceWorker
-             .register('./service-worker.js')
-             .then(function() { console.log('Service Worker Registered'); });
-  }
+
 
 })();
