@@ -2,7 +2,6 @@
 (function() {
   'use strict';
 
-  // Insert injected weather forecast here
   var initialWeatherForecast = {
     key: 'newyork',
     label: 'New York, NY',
@@ -30,7 +29,6 @@
     }
   };
 
-  // Don't forget to add hasRequestPending: false
   var app = {
     isLoading: true,
     visibleCards: {},
@@ -154,8 +152,7 @@
   app.getForecast = function(key, label) {
     var url = 'https://publicdata-weather.firebaseio.com/';
     url += key + '.json';
-    // Make request to the cache here
-    // Remember to set app.hasRequestPending = true!
+    // Make the XHR to get the data, then update the card
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -163,8 +160,7 @@
           var response = JSON.parse(request.response);
           response.key = key;
           response.label = label;
-          // Remember to set app.hasRequestPending = false!
-          console.log('[App] Forecast Updated From Network');
+          app.hasRequestPending = false;
           app.updateForecastCard(response);
         }
       }
@@ -188,17 +184,16 @@
     localStorage.selectedCities = selectedCities;
   };
 
-  /*****************************************************************************
+  /************************************************************************
    *
    * Code required to start the app
    *
-   * NOTE: To simplify this getting started guide, we've used localStorage.
-   *   localStorage is a syncronous API and has serious performance
+   * NOTE: To simplify this codelab, we've used localStorage.
+   *   localStorage is a synchronous API and has serious performance
    *   implications. It should not be used in production applications!
    *   Instead, check out IDB (https://www.npmjs.com/package/idb) or
    *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
-   *
-   ****************************************************************************/
+   ************************************************************************/
 
   app.selectedCities = localStorage.selectedCities;
   if (app.selectedCities) {
@@ -214,11 +209,9 @@
     app.saveSelectedCities();
   }
 
-  // Add feature check for Service Workers here
   if('serviceWorker' in navigator) {
     navigator.serviceWorker
-             .register('./service-worker.js')
+             .register('/service-worker.js')
              .then(function() { console.log('Service Worker Registered'); });
   }
-
 })();
