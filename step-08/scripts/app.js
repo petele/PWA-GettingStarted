@@ -30,6 +30,7 @@
   };
 
   var app = {
+    hasRequestPending: false,
     isLoading: true,
     visibleCards: {},
     selectedCities: [],
@@ -37,8 +38,7 @@
     cardTemplate: document.querySelector('.cardTemplate'),
     container: document.querySelector('.main'),
     addDialog: document.querySelector('.dialog-container'),
-    daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    hasRequestPending: false
+    daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   };
 
 

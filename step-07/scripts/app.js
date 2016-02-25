@@ -30,6 +30,7 @@
   };
 
   var app = {
+    hasRequestPending: false,
     isLoading: true,
     visibleCards: {},
     selectedCities: [],
@@ -37,8 +38,7 @@
     cardTemplate: document.querySelector('.cardTemplate'),
     container: document.querySelector('.main'),
     addDialog: document.querySelector('.dialog-container'),
-    daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    hasRequestPending: false
+    daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   };
 
 
@@ -169,8 +169,8 @@
         }
       });
     }
-    // Make the XHR to get the data, then update the card
     app.hasRequestPending = true;
+    // Make the XHR to get the data, then update the card
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
