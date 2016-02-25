@@ -160,7 +160,6 @@
           var response = JSON.parse(request.response);
           response.key = key;
           response.label = label;
-          app.hasRequestPending = false;
           app.updateForecastCard(response);
         }
       }
