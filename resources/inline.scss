@@ -49,6 +49,7 @@ body {
   align-items: stretch;
   align-content: center;
   transition: transform 0.233s cubic-bezier(0,0,0.21,1) 0.1s;
+  z-index: 1000;
 
   .headerButton {
     width: 24px;
