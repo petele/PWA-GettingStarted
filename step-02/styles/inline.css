@@ -89,7 +89,8 @@ body {
     -webkit-transition: opacity 0.333s cubic-bezier(0, 0, 0.21, 1);
     transition: opacity 0.333s cubic-bezier(0, 0, 0.21, 1);
     border: none;
-    outline: none; }
+    outline: none;
+    cursor: pointer; }
   .header #butRefresh {
     background: url(/images/ic_refresh_white_24px.svg) center center no-repeat; }
   .header #butAdd {
