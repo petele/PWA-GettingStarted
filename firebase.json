@@ -1,15 +1,17 @@
 {
-  "firebase": "petes-pwa-test",
+  "firebase": "weather-pwa-sample",
   "public": ".",
   "ignore": [
-    "firebase.json",
-    "**/.*",
     "**/node_modules/**",
+    "**/resources/*",
+    "**/.*",
+    "firebase.json",    
+    "generate-sw.js",
     "gulpfile.js",
-    "package.json",
-    "readme.md",
-    "pwa-weather.zip",
     "make-zip.sh",
+    "package.json",
+    "pwa-weather.zip",
+    "readme.md",
     "server.js"
   ]
 }
